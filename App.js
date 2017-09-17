@@ -1,13 +1,21 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {Animated,  StyleSheet, Text, View, PanResponder } from 'react-native';
+
+import Potato from './components/Potato';
+import DraggableView from './components/DraggableView'
 
 export default class App extends React.Component {
+
+  state={
+    x: 50,
+    y: 25
+  }
   render() {
     return (
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
+        <DraggableView>
+        <Potato/>
+        </DraggableView>
       </View>
     );
   }
@@ -16,8 +24,6 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#ffa500',
   },
 });
