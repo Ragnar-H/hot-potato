@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Animated,  StyleSheet, Text, View, PanResponder } from 'react-native';
+import { Animated, PanResponder } from 'react-native';
 
 export default class DraggableView extends React.Component {
   constructor(props) {
@@ -10,14 +10,17 @@ export default class DraggableView extends React.Component {
     };
     this.state.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event([null, {
-        dx: this.state.pan.x, // x,y are Animated.Value
-        dy: this.state.pan.y,
-      }]),
+      onPanResponderMove: Animated.event([
+        null,
+        {
+          dx: this.state.pan.x, // x,y are Animated.Value
+          dy: this.state.pan.y,
+        },
+      ]),
       onPanResponderRelease: () => {
         Animated.spring(
-          this.state.pan,         // Auto-multiplexed
-          {toValue: {x: 0, y: 0}} // Back to zero
+          this.state.pan, // Auto-multiplexed
+          { toValue: { x: 0, y: 0 } } // Back to zero
         ).start();
       },
     });
