@@ -7,6 +7,9 @@ import DraggableView from './components/DraggableView';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ffa500',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
