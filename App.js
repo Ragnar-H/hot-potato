@@ -1,10 +1,13 @@
 /* @flow */
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Notifications } from 'expo';
 
 import Potato from './components/Potato';
 import DraggableView from './components/DraggableView';
 import Dropzone from './components/Dropzone';
+
+import registerForPushNotificationsAsync from './api/RegisterForPushNotificationsAsync';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,12 +20,27 @@ const styles = StyleSheet.create({
 
 type State = {
   droppedInZone: boolean,
+  notification: ?string,
 };
 
 export default class App extends React.Component {
   state: State;
+  _notificationSubscription: () => void;
   state = {
     droppedInZone: false,
+    notification: null,
+  };
+
+  componentWillMount() {
+    registerForPushNotificationsAsync();
+
+    this._notificationSubscription = Notifications.addListener(
+      this._handleNotification
+    );
+  }
+
+  _handleNotification = notification => {
+    this.setState({ notification });
   };
 
   render() {
