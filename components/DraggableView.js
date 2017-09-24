@@ -17,7 +17,10 @@ export default class DraggableView extends React.Component {
           dy: this.state.pan.y,
         },
       ]),
-      onPanResponderRelease: () => {
+      onPanResponderRelease: (e, gesture) => {
+        if (this.isDropZone(gesture)) {
+          console.log('<<< dropZoned >>>'); //eslint-disable-line
+        }
         Animated.spring(
           this.state.pan, // Auto-multiplexed
           { toValue: { x: 0, y: 0 } }
@@ -25,6 +28,13 @@ export default class DraggableView extends React.Component {
       },
     });
   }
+
+  isDropZone = gesture => {
+    const dropY = 0;
+    const dropHeight = 100;
+    return gesture.moveY > dropY && gesture.moveY < dropY + dropHeight;
+  };
+
   render() {
     return (
       <Animated.View
