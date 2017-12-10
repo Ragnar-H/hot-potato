@@ -1,6 +1,6 @@
 /* @flow */
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { AsyncStorage, StyleSheet, View } from 'react-native';
 import { Notifications } from 'expo';
 
 import Potato from './components/Potato';
@@ -8,6 +8,13 @@ import DraggableView from './components/DraggableView';
 import Dropzone from './components/Dropzone';
 
 import registerForPushNotificationsAsync from './api/RegisterForPushNotificationsAsync';
+
+const STORE_USER_KEY = '@HotPotato:user_name';
+
+type User = {
+  device_id: string,
+  player_name: string,
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -32,15 +39,44 @@ export default class App extends React.Component {
   };
 
   componentWillMount() {
-    registerForPushNotificationsAsync().then(resp => {
-      //FixMe: store and show the player name
-      console.log(resp); // eslint-disable-line
-    });
+    const user = this.loadUser();
+    if (!user) {
+      this.registerUser();
+    }
 
     this._notificationSubscription = Notifications.addListener(
       this._handleNotification
     );
   }
+
+  registerUser = () => {
+    registerForPushNotificationsAsync().then(resp => {
+      resp.json().then(data => {
+        this.storeUser(data);
+      });
+    });
+  };
+
+  storeUser = async (user: User) => {
+    try {
+      await AsyncStorage.setItem(STORE_USER_KEY, user.player_name);
+    } catch (error) {
+      console.warn(error); //eslint-disable-line
+    }
+  };
+
+  loadUser = async () => {
+    try {
+      const user = await AsyncStorage.getItem(STORE_USER_KEY);
+      if (user !== null) {
+        // We have data!!
+        return user;
+      }
+      return null;
+    } catch (error) {
+      console.warn(error); //eslint-disable-line
+    }
+  };
 
   _handleNotification = notification => {
     this.setState({ notification });
