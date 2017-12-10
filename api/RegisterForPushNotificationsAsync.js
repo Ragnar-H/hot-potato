@@ -1,8 +1,8 @@
 import { Permissions, Notifications } from 'expo';
 import superheroes from 'superheroes';
-const PUSH_ENDPOINT =
-  'https://mp1i7cg03f.execute-api.eu-west-1.amazonaws.com/dev/register';
-// const PUSH_ENDPOINT = 'https://69b8ad8d.ngrok.io/register';
+// const PUSH_ENDPOINT =
+//   'https://mp1i7cg03f.execute-api.eu-west-1.amazonaws.com/dev/register';
+const PUSH_ENDPOINT = 'https://41d89ac0.ngrok.io/register';
 
 registerForPushNotificationsAsync = async () => {
   const { existingStatus } = await Permissions.getAsync(

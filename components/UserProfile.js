@@ -1,9 +1,10 @@
 /* @flow */
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 type Props = {
   userName: string,
+  handleOnPress: () => Promise<*>,
 };
 
 const styles = StyleSheet.create({
@@ -21,10 +22,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export const UserProfile = ({ userName }: Props) => (
-  <View style={styles.container}>
+const UserProfile = ({ userName, handleOnPress }: Props) => (
+  <TouchableHighlight onPress={handleOnPress} style={styles.container}>
     <Text style={styles.textBox}>Welcome {userName}</Text>
-  </View>
+  </TouchableHighlight>
 );
 
 export default UserProfile;

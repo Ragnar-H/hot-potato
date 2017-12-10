@@ -41,15 +41,16 @@ export default class App extends React.Component<void, void, State> {
     userName: null,
   };
 
-  componentWillMount() {
-    const userName = this.loadUser();
-    if (!userName) {
-      this.registerUser();
-    }
-
+  componentDidMount() {
     this._notificationSubscription = Notifications.addListener(
       this._handleNotification
     );
+
+    this.loadUser().then(userName => {
+      if (!userName) {
+        this.registerUser();
+      }
+    });
   }
 
   registerUser = async () => {
@@ -79,10 +80,21 @@ export default class App extends React.Component<void, void, State> {
       return null;
     } catch (error) {
       console.warn(error); //eslint-disable-line
+      return null;
+    }
+  };
+
+  deleteUser = async () => {
+    try {
+      await AsyncStorage.removeItem(STORE_USER_KEY);
+      this.setState({ userName: null });
+    } catch (error) {
+      console.warn(error); //eslint-disable-line
     }
   };
 
   _handleNotification = notification => {
+    console.log('Got notification >>>>>>>>>>>> ', notification); //eslint-disable-line
     this.setState({ notification });
   };
 
@@ -94,7 +106,9 @@ export default class App extends React.Component<void, void, State> {
         <DraggableView>
           <Potato />
         </DraggableView>
-        {userName && <UserProfile userName={userName} />}
+        {userName && (
+          <UserProfile userName={userName} handleOnPress={this.deleteUser} />
+        )}
       </View>
     );
   }
