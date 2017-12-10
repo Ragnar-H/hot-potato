@@ -6,6 +6,7 @@ import { Notifications } from 'expo';
 import Potato from './components/Potato';
 import DraggableView from './components/DraggableView';
 import Dropzone from './components/Dropzone';
+import UserProfile from './components/UserProfile';
 
 import registerForPushNotificationsAsync from './api/RegisterForPushNotificationsAsync';
 
@@ -28,19 +29,21 @@ const styles = StyleSheet.create({
 type State = {
   droppedInZone: boolean,
   notification: ?string,
+  userName: ?string,
 };
 
-export default class App extends React.Component {
+export default class App extends React.Component<void, void, State> {
   state: State;
   _notificationSubscription: () => void;
   state = {
     droppedInZone: false,
     notification: null,
+    userName: null,
   };
 
   componentWillMount() {
-    const user = this.loadUser();
-    if (!user) {
+    const userName = this.loadUser();
+    if (!userName) {
       this.registerUser();
     }
 
@@ -49,12 +52,13 @@ export default class App extends React.Component {
     );
   }
 
-  registerUser = () => {
-    registerForPushNotificationsAsync().then(resp => {
-      resp.json().then(data => {
-        this.storeUser(data);
-      });
-    });
+  registerUser = async () => {
+    const resp = await registerForPushNotificationsAsync();
+
+    const data: User = await resp.json();
+
+    await this.storeUser(data);
+    this.setState({ userName: data.player_name });
   };
 
   storeUser = async (user: User) => {
@@ -69,7 +73,7 @@ export default class App extends React.Component {
     try {
       const user = await AsyncStorage.getItem(STORE_USER_KEY);
       if (user !== null) {
-        // We have data!!
+        this.setState({ userName: user });
         return user;
       }
       return null;
@@ -83,12 +87,14 @@ export default class App extends React.Component {
   };
 
   render() {
+    const { userName } = this.state;
     return (
       <View style={styles.container}>
         <Dropzone />
         <DraggableView>
           <Potato />
         </DraggableView>
+        {userName && <UserProfile userName={userName} />}
       </View>
     );
   }
