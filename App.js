@@ -32,7 +32,10 @@ export default class App extends React.Component {
   };
 
   componentWillMount() {
-    registerForPushNotificationsAsync();
+    registerForPushNotificationsAsync().then(resp => {
+      //FixMe: store and show the player name
+      console.log(resp); // eslint-disable-line
+    });
 
     this._notificationSubscription = Notifications.addListener(
       this._handleNotification

@@ -1,6 +1,8 @@
 import { Permissions, Notifications } from 'expo';
-
-const PUSH_ENDPOINT = 'https://your-server.com/users/push-token';
+import superheroes from 'superheroes';
+const PUSH_ENDPOINT =
+  'https://mp1i7cg03f.execute-api.eu-west-1.amazonaws.com/dev/register';
+// const PUSH_ENDPOINT = 'https://69b8ad8d.ngrok.io/register';
 
 registerForPushNotificationsAsync = async () => {
   const { existingStatus } = await Permissions.getAsync(
@@ -25,25 +27,18 @@ registerForPushNotificationsAsync = async () => {
   // Get the token that uniquely identifies this device
   const token = await Notifications.getExpoPushTokenAsync();
 
-  console.log('<<< TOKEN >>>'); //eslint-disable-line
-  console.log(token); //eslint-disable-line
-
+  const playerName = superheroes.random();
   // POST the token to our backend so we can use it to send pushes from there
-  // return fetch(PUSH_ENDPOINT, {
-  //   method: 'POST',
-  //   headers: {
-  //     Accept: 'application/json',
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     token: {
-  //       value: token,
-  //     },
-  //     user: {
-  //       username: 'Brent',
-  //     },
-  //   }),
-  // });
+  return fetch(PUSH_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: playerName,
+      device_id: token,
+    }),
+  });
 };
 
 export default registerForPushNotificationsAsync;
