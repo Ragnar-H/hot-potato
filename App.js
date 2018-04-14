@@ -1,6 +1,7 @@
 /* @flow */
 import React from 'react';
 import { AsyncStorage, StyleSheet, View } from 'react-native';
+//$FlowFixMe this is being ignored right now
 import { Notifications } from 'expo';
 
 import Potato from './components/Potato';
