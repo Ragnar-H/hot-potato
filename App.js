@@ -3,6 +3,7 @@ import React from 'react';
 import { AsyncStorage, StyleSheet, View } from 'react-native';
 //$FlowFixMe this is being ignored right now
 import { Notifications } from 'expo';
+import firebase from 'firebase';
 
 import Potato from './components/Potato';
 import DraggableView from './components/DraggableView';
@@ -10,6 +11,8 @@ import Dropzone from './components/Dropzone';
 import UserProfile from './components/UserProfile';
 
 import registerForPushNotificationsAsync from './api/RegisterForPushNotificationsAsync';
+
+import { firebaseConfig } from './firebaseConfig';
 
 const STORE_USER_KEY = '@HotPotato:user_name';
 
@@ -43,16 +46,29 @@ export default class App extends React.Component<{}, State> {
   };
 
   componentDidMount() {
-    this._notificationSubscription = Notifications.addListener(
-      this._handleNotification
-    );
+    // this._notificationSubscription = Notifications.addListener(
+    //   this._handleNotification
+    // );
+    this.setupFirebase();
+    this.tossPotato();
 
-    this.loadUser().then(userName => {
-      if (!userName) {
-        this.registerUser();
-      }
-    });
+    // this.loadUser().then(userName => {
+    //   if (!userName) {
+    //     this.registerUser();
+    //   }
+    // });
   }
+
+  setupFirebase = () => firebase.initializeApp(firebaseConfig);
+
+  tossPotato = async (userId: string = 'raggi-dev', msg: string = 'hello') => {
+    firebase
+      .database()
+      .ref('users/' + userId)
+      .set({
+        message: msg,
+      });
+  };
 
   registerUser = async () => {
     const resp = await registerForPushNotificationsAsync();
