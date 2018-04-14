@@ -33,7 +33,7 @@ type State = {
   userName: ?string,
 };
 
-export default class App extends React.Component<void, void, State> {
+export default class App extends React.Component<{}, State> {
   state: State;
   _notificationSubscription: () => void;
   state = {
