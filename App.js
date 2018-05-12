@@ -49,9 +49,8 @@ export default class App extends React.Component<{}, State> {
     // this._notificationSubscription = Notifications.addListener(
     //   this._handleNotification
     // );
-    this.setupFirebase();
-    this.tossPotato();
-
+    // this.setupFirebase();
+    // this.tossPotato();
     // this.loadUser().then(userName => {
     //   if (!userName) {
     //     this.registerUser();
