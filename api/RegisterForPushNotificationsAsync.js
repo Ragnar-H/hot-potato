@@ -1,10 +1,18 @@
+/* @flow */
+//$FlowFixMe: cant find expo in flow
 import { Permissions, Notifications } from 'expo';
 import superheroes from 'superheroes';
 // const PUSH_ENDPOINT =
 //   'https://mp1i7cg03f.execute-api.eu-west-1.amazonaws.com/dev/register';
-const PUSH_ENDPOINT = 'https://41d89ac0.ngrok.io/register';
+const PUSH_ENDPOINT = 'https://3806d709.ngrok.io/register';
 
-registerForPushNotificationsAsync = async () => {
+export type User = {
+  id: string,
+  push_token: string,
+  username: string,
+};
+
+const registerForPushNotificationsAsync = async (): Promise<User> => {
   const { existingStatus } = await Permissions.getAsync(
     Permissions.NOTIFICATIONS
   );
@@ -20,26 +28,33 @@ registerForPushNotificationsAsync = async () => {
   }
 
   // Stop here if the user did not grant permissions
-  if (finalStatus !== 'granted') {
-    return;
-  }
+  // if (finalStatus !== 'granted') {
+  //   return;
+  // }
 
   // Get the token that uniquely identifies this device
   const token = await Notifications.getExpoPushTokenAsync();
-
   const playerName = superheroes.random();
+
+  const user = {
+    username: playerName,
+    push_token: token,
+  };
+
   // POST the token to our backend so we can use it to send pushes from there
-  return fetch(PUSH_ENDPOINT, {
+  const resp = await fetch(PUSH_ENDPOINT, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      name: playerName,
-      device_id: token,
-    }),
+    body: JSON.stringify(user),
   });
+
+  const data = await resp.json();
+
+  const userWithId = { ...user, id: data.id };
+  return userWithId;
 };
 
 export default registerForPushNotificationsAsync;

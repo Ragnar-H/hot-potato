@@ -1,4 +1,9 @@
 [ignore]
+; Ignore Bower files in node_modules
+; because...we dont really care about that
+.*/node_modules/*/.*/bower.json
+
+
 ; We fork some components by platform
 .*/*[.]android.js
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 type Props = {
-  userName: string,
+  username: string,
   handleOnPress: () => Promise<*>,
 };
 
@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const UserProfile = ({ userName, handleOnPress }: Props) => (
+const UserProfile = ({ username, handleOnPress }: Props) => (
   <TouchableHighlight onPress={handleOnPress} style={styles.container}>
-    <Text style={styles.textBox}>Welcome {userName}</Text>
+    <Text style={styles.textBox}>Welcome {username}</Text>
   </TouchableHighlight>
 );
 

@@ -11,15 +11,10 @@ import Dropzone from './components/Dropzone';
 import UserProfile from './components/UserProfile';
 
 import registerForPushNotificationsAsync from './api/RegisterForPushNotificationsAsync';
-
+import type { User } from './api/registerForPushNotificationsAsync';
 import { firebaseConfig } from './firebaseConfig';
 
 const STORE_USER_KEY = '@HotPotato:user_name';
-
-type User = {
-  device_id: string,
-  player_name: string,
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -30,11 +25,20 @@ const styles = StyleSheet.create({
   },
 });
 
-type State = {
+type Holder = {
+  username: string,
+  id: string,
+};
+type TPotato = {
+  holder: Holder,
+  explosion: string,
+};
+type State = {|
   droppedInZone: boolean,
   notification: ?string,
-  userName: ?string,
-};
+  user: ?User,
+  potato: ?TPotato,
+|};
 
 export default class App extends React.Component<{}, State> {
   state: State;
@@ -42,20 +46,22 @@ export default class App extends React.Component<{}, State> {
   state = {
     droppedInZone: false,
     notification: null,
-    userName: null,
+    user: null,
+    potato: null,
   };
 
   componentDidMount() {
-    // this._notificationSubscription = Notifications.addListener(
-    //   this._handleNotification
-    // );
-    // this.setupFirebase();
+    this._notificationSubscription = Notifications.addListener(
+      this._handleNotification
+    );
+    this.setupFirebase();
+    this._subscribeToPotato();
     // this.tossPotato();
-    // this.loadUser().then(userName => {
-    //   if (!userName) {
-    //     this.registerUser();
-    //   }
-    // });
+    this.loadUser().then(username => {
+      if (!username) {
+        this.registerUser();
+      }
+    });
   }
 
   setupFirebase = () => firebase.initializeApp(firebaseConfig);
@@ -70,17 +76,15 @@ export default class App extends React.Component<{}, State> {
   };
 
   registerUser = async () => {
-    const resp = await registerForPushNotificationsAsync();
+    const user = await registerForPushNotificationsAsync();
 
-    const data: User = await resp.json();
-
-    await this.storeUser(data);
-    this.setState({ userName: data.player_name });
+    await this.storeUser(user);
+    this.setState({ user });
   };
 
   storeUser = async (user: User) => {
     try {
-      await AsyncStorage.setItem(STORE_USER_KEY, user.player_name);
+      await AsyncStorage.setItem(STORE_USER_KEY, JSON.stringify(user));
     } catch (error) {
       console.warn(error); //eslint-disable-line
     }
@@ -88,9 +92,10 @@ export default class App extends React.Component<{}, State> {
 
   loadUser = async () => {
     try {
-      const user = await AsyncStorage.getItem(STORE_USER_KEY);
-      if (user !== null) {
-        this.setState({ userName: user });
+      const userStringified = await AsyncStorage.getItem(STORE_USER_KEY);
+      if (userStringified !== null) {
+        const user = JSON.parse(userStringified);
+        this.setState({ user });
         return user;
       }
       return null;
@@ -103,7 +108,7 @@ export default class App extends React.Component<{}, State> {
   deleteUser = async () => {
     try {
       await AsyncStorage.removeItem(STORE_USER_KEY);
-      this.setState({ userName: null });
+      this.setState({ user: null });
     } catch (error) {
       console.warn(error); //eslint-disable-line
     }
@@ -114,16 +119,29 @@ export default class App extends React.Component<{}, State> {
     this.setState({ notification });
   };
 
+  _subscribeToPotato = () => {
+    firebase
+      .database()
+      .ref('potato')
+      .on('value', snapshot => {
+        const potato = snapshot.val();
+        this.setState({ potato });
+      });
+  };
+
   render() {
-    const { userName } = this.state;
+    const { user } = this.state;
     return (
       <View style={styles.container}>
         <Dropzone />
         <DraggableView>
           <Potato />
         </DraggableView>
-        {userName && (
-          <UserProfile userName={userName} handleOnPress={this.deleteUser} />
+        {user && (
+          <UserProfile
+            username={user.username}
+            handleOnPress={this.deleteUser}
+          />
         )}
       </View>
     );
