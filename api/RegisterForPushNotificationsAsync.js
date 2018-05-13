@@ -2,9 +2,9 @@
 //$FlowFixMe: cant find expo in flow
 import { Permissions, Notifications } from 'expo';
 import superheroes from 'superheroes';
-// const PUSH_ENDPOINT =
-//   'https://mp1i7cg03f.execute-api.eu-west-1.amazonaws.com/dev/register';
-const PUSH_ENDPOINT = 'https://3806d709.ngrok.io/register';
+import { API_URL } from './api';
+
+const PUSH_ENDPOINT = `${API_URL}/register`;
 
 export type User = {
   id: string,

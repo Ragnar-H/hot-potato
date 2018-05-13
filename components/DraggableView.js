@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Animated, PanResponder } from 'react-native';
+import { tossPotato } from '../api/api';
 
 export default class DraggableView extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ export default class DraggableView extends React.Component {
       ]),
       onPanResponderRelease: (e, gesture) => {
         if (this.isDropZone(gesture)) {
-          console.log('<<< dropZoned >>>'); //eslint-disable-line
+          tossPotato();
         }
         Animated.spring(
           this.state.pan, // Auto-multiplexed

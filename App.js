@@ -66,14 +66,14 @@ export default class App extends React.Component<{}, State> {
 
   setupFirebase = () => firebase.initializeApp(firebaseConfig);
 
-  tossPotato = async (userId: string = 'raggi-dev', msg: string = 'hello') => {
-    firebase
-      .database()
-      .ref('users/' + userId)
-      .set({
-        message: msg,
-      });
-  };
+  // tossPotato = async (userId: string = 'raggi-dev', msg: string = 'hello') => {
+  //   firebase
+  //     .database()
+  //     .ref('users/' + userId)
+  //     .set({
+  //       message: msg,
+  //     });
+  // };
 
   registerUser = async () => {
     const user = await registerForPushNotificationsAsync();
