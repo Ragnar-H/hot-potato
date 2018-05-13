@@ -139,18 +139,12 @@ export default class App extends React.Component<{}, State> {
     if (potato) {
       holder = potato.holder;
     }
+    const holdsPotato = holder && user && holder.id === user.id;
     return (
       <View style={styles.container}>
         <Dropzone />
-        <DraggableView>
-          <Potato />
-        </DraggableView>
-        {holder &&
-          user && (
-            <Text>
-              {holder.id === user.id ? 'you have it' : `${holder.id} has it`}
-            </Text>
-          )}
+        <DraggableView>{holdsPotato && <Potato />}</DraggableView>
+        {!holdsPotato && holder && <Text>{`${holder.username} has it`}</Text>}
         {user && (
           <UserProfile
             username={user.username}
