@@ -1,6 +1,6 @@
 /* @flow */
 import React from 'react';
-import { AsyncStorage, StyleSheet, View } from 'react-native';
+import { AsyncStorage, Text, StyleSheet, View } from 'react-native';
 //$FlowFixMe this is being ignored right now
 import { Notifications } from 'expo';
 import firebase from 'firebase';
@@ -125,18 +125,32 @@ export default class App extends React.Component<{}, State> {
       .ref('potato')
       .on('value', snapshot => {
         const potato = snapshot.val();
-        this.setState({ potato });
+        if (potato) {
+          const potatoId = Object.keys(potato)[0];
+          const peeledPotato = potato[potatoId];
+          this.setState({ potato: peeledPotato });
+        }
       });
   };
 
   render() {
-    const { user } = this.state;
+    const { user, potato } = this.state;
+    let holder = null;
+    if (potato) {
+      holder = potato.holder;
+    }
     return (
       <View style={styles.container}>
         <Dropzone />
         <DraggableView>
           <Potato />
         </DraggableView>
+        {holder &&
+          user && (
+            <Text>
+              {holder.id === user.id ? 'you have it' : `${holder.id} has it`}
+            </Text>
+          )}
         {user && (
           <UserProfile
             username={user.username}
